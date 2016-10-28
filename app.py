@@ -3,11 +3,15 @@ import logging
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 import customers
+import lines
+import customer_types
 import requests as r
 
 app = Flask(__name__)
 CORS(app)
 app.register_blueprint(customers.customers_app, url_prefix='/customers')
+app.register_blueprint(lines.lines_app, url_prefix='/lines')
+app.register_blueprint(customer_types.customer_types_app, url_prefix='/customer_types')
 logging.getLogger('flask_cors').level = logging.DEBUG
 
 
