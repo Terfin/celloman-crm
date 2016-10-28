@@ -1,13 +1,25 @@
-from flask import Flask, request, jsonify, Response
+import logging
+
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 import customers
 import requests as r
 
 app = Flask(__name__)
+CORS(app)
 app.register_blueprint(customers.customers_app, url_prefix='/customers')
+logging.getLogger('flask_cors').level = logging.DEBUG
+
+
+@app.route('/', methods=['OPTIONS'], defaults={'path': ''})
+@app.route('/<path:path>', methods=['OPTIONS'])
+def options(path):
+    return ''
 
 @app.route('/login/', methods=['POST'])
 def login():
     data = request.json
+    print(data)
     req = r.post('http://127.0.0.1:8000/api-token-auth/', json=data)
     if req.status_code == 200:
         token = req.json()['token']
@@ -24,4 +36,4 @@ def login():
         return '', 401
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=True, port=8001)
